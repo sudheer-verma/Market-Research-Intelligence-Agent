@@ -97,7 +97,7 @@ live research and forces the clearly labelled sample report.
 ## Tests
 
 ```powershell
-pytest
+python -m pytest -q
 ```
 
 Tests use temporary directories and mocked/offline data. They do not require paid APIs or internet access.
