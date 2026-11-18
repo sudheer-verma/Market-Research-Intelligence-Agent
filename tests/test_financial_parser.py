@@ -34,3 +34,14 @@ def test_invalid_csv_input():
 def test_empty_dataset():
     result = parse_financial_csv("Revenue\n")
     assert result["status"] in {"error", "ok"}
+
+
+def test_invalid_values_are_not_silently_converted():
+    result = parse_financial_csv("Revenue\nN/A\nunknown\n")
+    assert result["status"] == "ok"
+    assert result["summary"]["Revenue"]["valid"] is False
+
+
+def test_markdown_table_is_generated():
+    result = parse_financial_csv("Revenue\n100\n200\n")
+    assert "|" in result["markdown"]
