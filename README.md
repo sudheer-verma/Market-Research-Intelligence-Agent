@@ -47,13 +47,22 @@ pip install -r requirements.txt
 
 ## API key configuration
 
-Copy `.env.example` to `.env`, then configure:
+MOCK MODE is enabled by default in `.env.example`, so no credentials are required:
 
+```text
+MOCK_MODE=true
+```
+
+The mock command uses a local illustrative CSV and clearly labelled sample research
+results. It never calls OpenAI, Tavily, Serper, or external websites.
+
+To configure live integrations in the future, copy `.env.example` to `.env` and set:
 ```text
 OPENAI_API_KEY=your_openai_key
 TAVILY_API_KEY=your_tavily_key
 SERPER_API_KEY=
 MODEL_NAME=openai/gpt-4o-mini
+MOCK_MODE=false
 ```
 
 One search credential is required: `TAVILY_API_KEY` or `SERPER_API_KEY`. Live execution also requires `OPENAI_API_KEY`.
@@ -64,13 +73,16 @@ One search credential is required: `TAVILY_API_KEY` or `SERPER_API_KEY`. Live ex
 python main.py --query "Tech Sector Q3 Analysis"
 ```
 
+Live mode requires `MOCK_MODE=false` plus `OPENAI_API_KEY` and one search credential.
+
 ## Run offline PDF generation
 
 ```powershell
 python main.py --query "Tech Sector Q3 Analysis" --offline
 ```
 
-The offline command intentionally produces a report that clearly states that no live research was performed.
+The default command also runs in mock mode. The `--offline` option explicitly skips
+live research and forces the clearly labelled sample report.
 
 ## Output
 

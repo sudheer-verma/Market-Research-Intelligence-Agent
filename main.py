@@ -13,12 +13,14 @@ from dotenv import load_dotenv
 from benchmarks.benchmark import Benchmark
 from crew.crew import create_market_research_crew
 from crew.tools.financial_parser import parse_financial_csv
+from crew.tools.mock_data import MOCK_CSV, get_mock_research
 from pdf_generator.report_builder import build_report_pdf
 
 
 ROOT = Path(__file__).resolve().parent
 BENCHMARK_PATH = ROOT / "benchmarks" / "benchmarks.json"
 OUTPUT_PATH = ROOT / "output" / "market_report.pdf"
+MARKDOWN_OUTPUT_PATH = ROOT / "output" / "market_report.md"
 
 
 def validate_environment() -> list[str]:
@@ -73,6 +75,60 @@ def fallback_markdown(query: str) -> str:
     )
 
 
+def mock_markdown(query: str) -> tuple[str, str, dict[str, float]]:
+    research_start = time.perf_counter()
+    research = get_mock_research(query)
+    research_duration = time.perf_counter() - research_start
+
+    analyst_start = time.perf_counter()
+    parser = parse_financial_csv(MOCK_CSV)
+    financial_markdown = parser["markdown"]
+    analyst_duration = time.perf_counter() - analyst_start
+
+    findings = "\n".join(
+        f"- **{item['title'].replace('MOCK: ', '')}:** {item['snippet']}"
+        for item in research["results"]
+    )
+    writer_start = time.perf_counter()
+    report = (
+        "# Market Research Report\n\n"
+        "> **MOCK MODE:** This report uses clearly labelled illustrative sample data. "
+        "It is not live market research and must not be treated as factual market evidence.\n\n"
+        "## Executive Summary\n"
+        f"This mock report provides an offline demonstration for: **{query}**. "
+        "It illustrates resilient technology demand, AI and cloud growth, and "
+        "competitive execution risks using synthetic fixture data.\n\n"
+        "## Market Research Findings\n"
+        f"{findings}\n\n"
+        "## Financial Analysis\n"
+        "The following real statistics were calculated with Pandas from the local mock CSV.\n\n"
+        f"{financial_markdown}\n\n"
+        "## Market Trends\n"
+        "- Illustrative AI spending and cloud infrastructure demand remain growth themes.\n"
+        "- Illustrative recurring software revenue shows a positive quarterly trend.\n"
+        "- These trends come from mock fixture values, not current external observations.\n\n"
+        "## Risks and Limitations\n"
+        "- The data is synthetic and may not represent actual company or sector performance.\n"
+        "- No live websites, search providers, or financial filings were accessed.\n"
+        "- The report is suitable for UI, workflow, and PDF testing only.\n"
+        "- Real decisions require independently verified sources and current financial data.\n\n"
+        "## Conclusion\n"
+        "MOCK MODE successfully demonstrates the research, analyst, writer, PDF, and benchmark workflow "
+        "without API credentials. Activate live integrations only after configuring the required keys.\n\n"
+        "## Source References\n"
+        "- `mock://sample/technology-demand` - Illustrative technology-demand fixture.\n"
+        "- `mock://sample/competitive-pressure` - Illustrative competitive-pressure fixture.\n"
+        "- `local://data/mock_financial_data.csv` - Synthetic values from the local mock CSV fixture.\n"
+    )
+    writer_duration = time.perf_counter() - writer_start
+    durations = {
+        "mock_researcher": research_duration,
+        "mock_financial_analyst": analyst_duration,
+        "mock_content_writer": writer_duration,
+    }
+    return report, financial_markdown, durations
+
+
 def main(argv: list[str] | None = None) -> int:
     load_dotenv(ROOT / ".env")
     args = parse_arguments(argv)
@@ -85,10 +141,20 @@ def main(argv: list[str] | None = None) -> int:
     benchmark = Benchmark(BENCHMARK_PATH)
     report_markdown = ""
     financial_markdown = ""
-    if args.offline:
-        print("Running in offline mode; live research and LLM calls will be skipped.")
-        report_markdown = fallback_markdown(query)
-        benchmark.record_task("offline_report", "completed", 0.0)
+    mock_mode = (
+        args.offline
+        or os.getenv("MOCK_MODE", "true").strip().lower() in {"1", "true", "yes", "on"}
+    )
+    if mock_mode:
+        print("MOCK MODE: running without OpenAI, Tavily, or Serper API calls.")
+        print("MOCK MODE: using clearly labelled illustrative research and financial data.")
+        report_markdown, financial_markdown, mock_durations = mock_markdown(query)
+        benchmark.record_task("mock_researcher", "completed", round(mock_durations["mock_researcher"], 6))
+        benchmark.record_delegation("manager_mock_orchestrator", "mock_researcher", "illustrative market research")
+        benchmark.record_task("mock_financial_analyst", "completed", round(mock_durations["mock_financial_analyst"], 6))
+        benchmark.record_delegation("manager_mock_orchestrator", "mock_financial_analyst", "Pandas mock CSV analysis")
+        benchmark.record_task("mock_content_writer", "completed", round(mock_durations["mock_content_writer"], 6))
+        benchmark.record_delegation("manager_mock_orchestrator", "mock_content_writer", "Markdown report generation")
     else:
         missing = validate_environment()
         if missing:
@@ -122,6 +188,8 @@ def main(argv: list[str] | None = None) -> int:
 
     pdf_start = time.perf_counter()
     try:
+        MARKDOWN_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        MARKDOWN_OUTPUT_PATH.write_text(report_markdown, encoding="utf-8")
         pdf_path = build_report_pdf(OUTPUT_PATH, query, report_markdown, financial_markdown)
         benchmark.pdf_duration_seconds = round(time.perf_counter() - pdf_start, 6)
         benchmark.record_task("pdf_generation", "completed", benchmark.pdf_duration_seconds)
@@ -135,6 +203,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     print(f"Report generated: {pdf_path}")
+    print(f"Markdown report generated: {MARKDOWN_OUTPUT_PATH}")
     print(f"Benchmark written: {BENCHMARK_PATH}")
     return 0
 

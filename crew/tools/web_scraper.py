@@ -34,6 +34,10 @@ def search_and_scrape(query: str, max_results: int = 5) -> dict:
     if not isinstance(query, str) or not query.strip():
         return {"status": "error", "error": "Search query is empty.", "results": [], "retrieved_at": datetime.now(timezone.utc).isoformat()}
 
+    if os.getenv("MOCK_MODE", "true").strip().lower() in {"1", "true", "yes", "on"}:
+        from .mock_data import get_mock_research
+        return get_mock_research(query)
+
     tavily_key = os.getenv("TAVILY_API_KEY", "").strip()
     serper_key = os.getenv("SERPER_API_KEY", "").strip()
     results = []
