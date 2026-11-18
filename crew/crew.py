@@ -10,7 +10,10 @@ from .agents import build_agents
 from .tasks import build_tasks
 
 
-def create_market_research_crew(query: str) -> tuple[Crew, object]:
+def create_market_research_crew(
+    query: str,
+    task_callback=None,
+) -> tuple[Crew, object]:
     model_name = os.getenv("MODEL_NAME", "openai/gpt-4o-mini").strip()
     if not model_name:
         model_name = "openai/gpt-4o-mini"
@@ -26,6 +29,7 @@ def create_market_research_crew(query: str) -> tuple[Crew, object]:
         tasks=[research_task, analysis_task, report_task],
         process=Process.hierarchical,
         manager_llm=manager_llm,
+        task_callback=task_callback,
         verbose=True,
     )
     return crew, report_task

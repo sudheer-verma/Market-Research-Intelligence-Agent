@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from pypdf import PdfReader
+from reportlab.lib.pagesizes import A4
 
 from pdf_generator.report_builder import build_report_pdf
 
@@ -29,5 +30,9 @@ def test_pdf_structure_and_page_number(tmp_path: Path):
     build_report_pdf(output, "Test Query", long_markdown)
     reader = PdfReader(str(output))
     assert len(reader.pages) >= 1
+    page_width = float(reader.pages[0].mediabox.width)
+    page_height = float(reader.pages[0].mediabox.height)
+    assert abs(page_width - A4[0]) < 1
+    assert abs(page_height - A4[1]) < 1
     text = "\n".join(page.extract_text() or "" for page in reader.pages)
     assert "Page " in text

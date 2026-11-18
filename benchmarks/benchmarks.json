@@ -1,15 +1,15 @@
 {
-  "execution_start": "2026-11-18T06:20:39.044650+00:00",
-  "execution_end": "2026-11-18T06:20:39.081874+00:00",
-  "total_execution_duration_seconds": 0.036387,
+  "execution_start": "2026-11-18T06:33:10.207072+00:00",
+  "execution_end": "2026-11-18T06:33:10.234528+00:00",
+  "total_execution_duration_seconds": 0.027727,
   "task_durations": {
     "mock_researcher": {
       "status": "completed",
-      "duration_seconds": 9e-06
+      "duration_seconds": 5e-06
     },
     "mock_financial_analyst": {
       "status": "completed",
-      "duration_seconds": 0.020635
+      "duration_seconds": 0.016247
     },
     "mock_content_writer": {
       "status": "completed",
@@ -17,7 +17,7 @@
     },
     "pdf_generation": {
       "status": "completed",
-      "duration_seconds": 0.01563
+      "duration_seconds": 0.011399
     }
   },
   "task_execution_status": {
@@ -28,24 +28,24 @@
   },
   "manager_delegation_history": [
     {
-      "timestamp": "2026-11-18T06:20:39.065645+00:00",
+      "timestamp": "2026-11-18T06:33:10.223067+00:00",
       "delegated_by": "manager_mock_orchestrator",
       "delegated_to": "mock_researcher",
       "task": "illustrative market research"
     },
     {
-      "timestamp": "2026-11-18T06:20:39.065645+00:00",
+      "timestamp": "2026-11-18T06:33:10.223067+00:00",
       "delegated_by": "manager_mock_orchestrator",
       "delegated_to": "mock_financial_analyst",
       "task": "Pandas mock CSV analysis"
     },
     {
-      "timestamp": "2026-11-18T06:20:39.065645+00:00",
+      "timestamp": "2026-11-18T06:33:10.223067+00:00",
       "delegated_by": "manager_mock_orchestrator",
       "delegated_to": "mock_content_writer",
       "task": "Markdown report generation"
     }
   ],
   "errors": [],
-  "pdf_generation_duration_seconds": 0.01563
+  "pdf_generation_duration_seconds": 0.011399
 }

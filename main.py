@@ -170,8 +170,24 @@ def main(argv: list[str] | None = None) -> int:
             benchmark.finish()
             return 3
 
-        crew, report_task = create_market_research_crew(query)
         start = time.perf_counter()
+        last_task_time = {"value": start}
+
+        def live_task_callback(output) -> None:
+            now = time.perf_counter()
+            agent_name = getattr(output, "agent", "CrewAI task")
+            agent_name = str(getattr(agent_name, "role", agent_name))
+            task_name = getattr(output, "name", None) or getattr(output, "task", None)
+            task_name = str(task_name or "hierarchical_task")
+            elapsed = now - last_task_time["value"]
+            last_task_time["value"] = now
+            benchmark.record_task(task_name, "completed", elapsed)
+            benchmark.record_delegation("manager_llm", agent_name, task_name)
+
+        crew, report_task = create_market_research_crew(
+            query,
+            task_callback=live_task_callback,
+        )
         try:
             print(f"Starting hierarchical CrewAI research for: {query}")
             result = crew.kickoff(inputs={"query": query})
