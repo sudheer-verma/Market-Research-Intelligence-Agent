@@ -1,0 +1,22 @@
+{
+  "execution_start": "2026-11-18T06:02:24.327143+00:00",
+  "execution_end": "2026-11-18T06:02:24.333151+00:00",
+  "total_execution_duration_seconds": 0.005156,
+  "task_durations": {
+    "offline_report": {
+      "status": "completed",
+      "duration_seconds": 0.0
+    },
+    "pdf_generation": {
+      "status": "completed",
+      "duration_seconds": 0.005124
+    }
+  },
+  "task_execution_status": {
+    "offline_report": "completed",
+    "pdf_generation": "completed"
+  },
+  "manager_delegation_history": [],
+  "errors": [],
+  "pdf_generation_duration_seconds": 0.005124
+}
