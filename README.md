@@ -97,6 +97,10 @@ Tests use temporary directories and mocked/offline data. They do not require pai
 - **PDF page count:** run tests or open `output/market_report.pdf`.
 - **Dependency issues:** recreate the Python 3.12 virtual environment before reinstalling.
 
+## Continuous integration
+
+GitHub Actions runs the pytest suite on Python 3.12 for pushes and pull requests.
+
 ## Sample output
 
 The PDF includes an A4 title banner, executive summary, findings, financial analysis, trends, risks, conclusion, source references, and `Page X of Y` numbering.

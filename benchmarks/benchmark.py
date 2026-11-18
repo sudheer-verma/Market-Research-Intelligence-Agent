@@ -31,6 +31,14 @@ class Benchmark:
             "error": str(error),
         })
 
+    def record_delegation(self, delegated_by: str, delegated_to: str, task: str) -> None:
+        self.manager_history.append({
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "delegated_by": delegated_by,
+            "delegated_to": delegated_to,
+            "task": task,
+        })
+
     def finish(self) -> dict[str, Any]:
         ended_wall = datetime.now(timezone.utc)
         duration = time.perf_counter() - self.started_mono

@@ -110,6 +110,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Starting hierarchical CrewAI research for: {query}")
             result = crew.kickoff(inputs={"query": query})
             report_markdown = str(result)
+            benchmark.record_delegation("manager_llm", "hierarchical_crew", "market research and report generation")
             benchmark.record_task("hierarchical_crew", "completed", time.perf_counter() - start)
         except Exception as exc:
             elapsed = time.perf_counter() - start
