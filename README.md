@@ -94,6 +94,9 @@ live research and forces the clearly labelled sample report.
 
 `benchmarks.json` records wall-clock start/end times, measured duration, task statuses, errors, PDF generation duration, and manager delegation fields when available. Measurements are not simulated.
 
+Mock benchmark entries describe local mock processing stages and must not be
+interpreted as live API or web-research measurements.
+
 ## Tests
 
 ```powershell
@@ -104,6 +107,7 @@ Tests use temporary directories and mocked/offline data. They do not require pai
 
 ## Troubleshooting
 
+- **No API keys:** leave `MOCK_MODE=true`; the default command generates mock data.
 - **Missing API credentials:** copy `.env.example` to `.env` and set at least one search key plus `OPENAI_API_KEY`.
 - **CrewAI model errors:** verify `MODEL_NAME` and provider credentials.
 - **PDF page count:** run tests or open `output/market_report.pdf`.
