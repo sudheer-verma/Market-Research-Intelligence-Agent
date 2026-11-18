@@ -1,7 +1,5 @@
 """Offline mock-mode tests."""
 
-import os
-
 from crew.tools.mock_data import MOCK_CSV
 from crew.tools.web_scraper import search_and_scrape
 from crew.tools.financial_parser import parse_financial_csv
